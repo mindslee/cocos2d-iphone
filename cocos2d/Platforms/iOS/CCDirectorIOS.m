@@ -284,7 +284,13 @@ CGFloat	__ccContentScaleFactor = 1;
 	if( scaleFactor != __ccContentScaleFactor ) {
 
 		__ccContentScaleFactor = scaleFactor;
-		_winSizeInPixels = CGSizeMake( _winSizeInPoints.width * scaleFactor, _winSizeInPoints.height * scaleFactor );
+        // iPad hack
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+            _winSizeInPoints = CGSizeMake(_winSizeInPoints.width / scaleFactor, _winSizeInPoints.height / scaleFactor);
+        } else {
+            _winSizeInPixels = CGSizeMake(_winSizeInPoints.width * scaleFactor, _winSizeInPoints.height * scaleFactor);
+        }
+//		_winSizeInPixels = CGSizeMake( _winSizeInPoints.width * scaleFactor, _winSizeInPoints.height * scaleFactor );
 
 		if( __view )
 			[self updateContentScaleFactor];
@@ -298,7 +304,11 @@ CGFloat	__ccContentScaleFactor = 1;
 {
 	NSAssert( [__view respondsToSelector:@selector(setContentScaleFactor:)], @"cocos2d v2.0+ runs on iOS 4 or later");
 
-	[__view setContentScaleFactor: __ccContentScaleFactor];
+    // iPad hack
+    CGFloat scaleFactor = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? 1.f : __ccContentScaleFactor;
+
+    [__view setContentScaleFactor:scaleFactor];
+    
 	_isContentScaleSupported = YES;
 }
 
@@ -316,8 +326,9 @@ CGFloat	__ccContentScaleFactor = 1;
 	if (! [__view respondsToSelector:@selector(setContentScaleFactor:)])
 		return NO;
 
+    // iPad hack. 384x512 point
 	// SD device
-	if ([[UIScreen mainScreen] scale] == 1.0)
+	if ([[UIScreen mainScreen] scale] == 1.0 && UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPad)
 		return NO;
 
 	float newScale = enabled ? 2 : 1;
@@ -333,8 +344,17 @@ CGFloat	__ccContentScaleFactor = 1;
 // overriden, don't call super
 -(void) reshapeProjection:(CGSize)size
 {
-	_winSizeInPoints = [__view bounds].size;
-	_winSizeInPixels = CGSizeMake(_winSizeInPoints.width * __ccContentScaleFactor, _winSizeInPoints.height *__ccContentScaleFactor);
+    // iPad hack
+    CGSize winSize = [__view bounds].size;
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        _winSizeInPixels = winSize;
+        _winSizeInPoints = CC_SIZE_PIXELS_TO_POINTS(winSize);
+    } else {
+        _winSizeInPoints = winSize;
+        _winSizeInPixels = CC_SIZE_POINTS_TO_PIXELS(winSize);
+    }
+//	_winSizeInPoints = [__view bounds].size;
+//	_winSizeInPixels = CGSizeMake(_winSizeInPoints.width * __ccContentScaleFactor, _winSizeInPoints.height *__ccContentScaleFactor);
 
 	[self setProjection:_projection];
   
