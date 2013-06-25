@@ -164,16 +164,16 @@
 -(id) initOne: (CCFiniteTimeAction*) one two: (CCFiniteTimeAction*) two
 {
 	NSAssert( one!=nil && two!=nil, @"Sequence: arguments must be non-nil");
-	NSAssert( one!=_actions[0] && one!=_actions[1], @"Sequence: re-init using the same parameters is not supported");
-	NSAssert( two!=_actions[1] && two!=_actions[0], @"Sequence: re-init using the same parameters is not supported");
+//	NSAssert( one!=_actions[0] && one!=_actions[1], @"Sequence: re-init using the same parameters is not supported");
+//	NSAssert( two!=_actions[1] && two!=_actions[0], @"Sequence: re-init using the same parameters is not supported");
 	
-	ccTime d = [one duration] + [two duration];
+//	ccTime d = [one duration] + [two duration];
 	
-	if( (self=[super initWithDuration: d]) ) {
-		
-		// XXX: Supports re-init without leaking. Fails if one==_one || two==_two
-		[_actions[0] release];
-		[_actions[1] release];
+	if ((self = [super initWithDuration: one.duration + two.duration])) {
+
+//		// XXX: Supports re-init without leaking. Fails if one==_one || two==_two
+//		[_actions[0] release];
+//		[_actions[1] release];
 		
 		_actions[0] = [one retain];
 		_actions[1] = [two retain];

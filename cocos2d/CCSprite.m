@@ -209,9 +209,10 @@
 {
 	NSAssert(spriteFrame!=nil, @"Invalid spriteFrame for sprite");
 
-	id ret = [self initWithTexture:spriteFrame.texture rect:spriteFrame.rect];
-	[self setDisplayFrame:spriteFrame];
-	return ret;
+    if ((self = [self initWithTexture:spriteFrame.texture rect:spriteFrame.rect])) {
+        [self setDisplayFrame:spriteFrame];
+    }
+    return self;
 }
 
 -(id)initWithSpriteFrameName:(NSString*)spriteFrameName

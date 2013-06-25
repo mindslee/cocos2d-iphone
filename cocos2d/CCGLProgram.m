@@ -127,6 +127,7 @@ typedef void (*GLLogFunction) (GLuint program,
 			CCLOGWARN(@"Could not open vertex shader: %@", vShaderFilename);
 		if(!f)
 			CCLOGWARN(@"Could not open fragment shader: %@", fShaderFilename);
+        [self release];
 		return nil;
 	}
 	const GLchar * vertexSource = (GLchar*) [[NSString stringWithContentsOfFile:v encoding:NSUTF8StringEncoding error:nil] UTF8String];

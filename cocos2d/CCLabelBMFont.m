@@ -488,25 +488,27 @@ void FNTConfigRemoveCache( void )
 	NSAssert( (theString && fntFile) || (theString==nil && fntFile==nil), @"Invalid params for CCLabelBMFont");
 	
 	CCTexture2D *texture = nil;
-    
+    CCBMFontConfiguration *newConf = nil;
 	if( fntFile ) {
-		CCBMFontConfiguration *newConf = FNTConfigLoadFile(fntFile);
+		newConf = FNTConfigLoadFile(fntFile);
 		if(!newConf) {
 			CCLOGWARN(@"cocos2d: WARNING. CCLabelBMFont: Impossible to create font. Please check file: '%@'", fntFile );
 			[self release];
 			return nil;
 		}
         
-		_configuration = [newConf retain];
-		_fntFile = [fntFile copy];
-        
-		texture = [[CCTextureCache sharedTextureCache] addImage:_configuration.atlasName];
-        
-	} else
+		texture = [[CCTextureCache sharedTextureCache] addImage:newConf.atlasName];
+	} else {
 		texture = [[[CCTexture2D alloc] init] autorelease];
-    
+    }
     
 	if ( (self=[super initWithTexture:texture capacity:[theString length]]) ) {
+        
+        if (fntFile) {
+            _configuration = [newConf retain];
+            _fntFile = [fntFile copy];
+        }
+        
         _width = width;
         _alignment = alignment;
 
